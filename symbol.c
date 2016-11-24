@@ -773,6 +773,11 @@ static struct symbol_op choose_op = {
 	.args = arguments_choose,
 };
 
+static struct symbol_op bswap_op = {
+	.evaluate = evaluate_to_integer,
+	.expand = expand_bswap
+};
+
 /*
  * Builtin functions
  */
@@ -788,6 +793,9 @@ static struct sym_init {
 	{ "__builtin_warning", &builtin_fn_type, MOD_TOPLEVEL, &warning_op },
 	{ "__builtin_expect", &builtin_fn_type, MOD_TOPLEVEL, &expect_op },
 	{ "__builtin_choose_expr", &builtin_fn_type, MOD_TOPLEVEL, &choose_op },
+	{ "__builtin_bswap16", &builtin_fn_type, MOD_TOPLEVEL, &bswap_op },
+	{ "__builtin_bswap32", &builtin_fn_type, MOD_TOPLEVEL, &bswap_op },
+	{ "__builtin_bswap64", &builtin_fn_type, MOD_TOPLEVEL, &bswap_op },
 	{ NULL,		NULL,		0 }
 };
 

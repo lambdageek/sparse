@@ -130,6 +130,7 @@ struct symbol_op {
 
 extern int expand_safe_p(struct expression *expr, int cost);
 extern int expand_constant_p(struct expression *expr, int cost);
+extern int expand_bswap(struct expression *expr, int cost);
 
 #define SYM_ATTR_WEAK		0
 #define SYM_ATTR_NORMAL		1

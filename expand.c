@@ -802,6 +802,46 @@ int expand_safe_p(struct expression *expr, int cost)
 	return 0;
 }
 
+/* The arguments are constant if the cost of all of them is zero */
+int expand_bswap(struct expression *expr, int cost)
+{
+	struct symbol *sym;
+	struct expression_list *args = expr->args;
+	long long input;
+	int count;
+
+	if (cost)
+		return cost;
+
+	sym = expr->fn->ctype;
+	count = expression_list_size(args);
+	if (count != 1) {
+		sparse_error(expr->pos, "Invaild number of arguments for function %s (expected 1 got %d)",
+				show_ident(sym->ident), count);
+		return SIDE_EFFECTS;
+	}
+
+	input = const_expression_value(first_expression(args));
+
+	if (sym->ident == &__builtin_bswap16_ident) {
+		expr->value = __builtin_bswap16(input);
+		expr->ctype = &ushort_ctype;
+	} else if (sym->ident == &__builtin_bswap32_ident) {
+		expr->value = __builtin_bswap32(input);
+		expr->ctype = &uint_ctype;
+	} else if (sym->ident == &__builtin_bswap64_ident) {
+		expr->value = __builtin_bswap64(input);
+		expr->ctype = &ullong_ctype;
+	} else {
+		die("Unexpected __builtin_bswap symbol %s\n", show_ident(sym->ident));
+	}
+
+	expr->type = EXPR_VALUE;
+	expr->taint = 0;
+	return 0;
+}
+
+
 /*
  * expand a call expression with a symbol. This
  * should expand builtins.
